@@ -17,7 +17,7 @@ class Buffer : public QPlainTextEdit
 Q_OBJECT
 
 public:
-    explicit Buffer(QWidget *parent = nullptr);
+    Buffer(QWidget *parent = nullptr);
 
     void
     lineNumberAreaPaintEvent(QPaintEvent *event);

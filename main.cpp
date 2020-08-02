@@ -4,36 +4,45 @@
 #include <QApplication>
 
 #include <K.hpp>
-#include <Options.hpp>
+#include <OptionsParser.hpp>
 #include <src/KLog.hpp>
 
-K::Result<K::Arguments, std::string>
+K::Result<K::Options, std::string>
 parseOptions(int argc, char** argv)
 {
-  K::Options options;
+  K::OptionsParser options;
 
   options
-      .add('h', "--help", false, false, "Show usage message")
-      .add('v', "--version", false, false, "Show version")
-      .add('f', "--files", false, false, "Open given files (separated by space)\n"
-                                       "Default value is scratch buffer");
+      .add(K::OptionsParser::Entry('h', "--help")
+           .isFlag(false)
+           .isRequired(false)
+           .description("Show usage message"))
+      .add(K::OptionsParser::Entry('v', "--version")
+           .isFlag(false)
+           .isRequired(false)
+           .description("Show version"))
+      .add(K::OptionsParser::Entry('f', "--files")
+           .isFlag(false)
+           .isRequired(false)
+           .description("Open given files (separated by space)\n"
+                        "Default value is scratch buffer"));
 
-  K::Result<K::Arguments, std::string> ret;
-  if (!options.parse(argc, argv))
+  K::Options kargs;
+  K::Result<K::Options, std::string> ret;
+  if (!options.parse(kargs, argc, argv))
   {
     ret.setErr("failed to parse arguments");
     return ret;
   }
 
-  K::Arguments args;
-  ret.setOk(args);
+  ret.setOk(kargs);
   return ret;
 }
 
 int main(int argc, char** argv)
 {
   klog(".. welcome to K\n");
-  K::Result<K::Arguments, std::string> ret = parseOptions(argc, argv);
+  K::Result<K::Options, std::string> ret = parseOptions(argc, argv);
 
   if (!ret.isOk())
   {
@@ -42,10 +51,18 @@ int main(int argc, char** argv)
   }
 
   // unwrap
-  K::Arguments arguments = ret.getOk();
+  K::Options arguments = ret.getOk();
 
-//  m_args.m_curr_dir = fs::current_path();
-//  std::cerr <<  m_args.m_curr_dir << std::endl;
+  if (arguments.m_help_str.has_value())
+  {
+    std::cerr << "usage: " << arguments.m_help_str.value() << std::endl;
+    return 0;
+  }
+  else if (arguments.m_version_str.has_value())
+  {
+    std::cerr << "K: " << arguments.m_version_str.value() << std::endl;
+    return 0;
+  }
 
   QApplication a(argc, argv);
   K::K w(nullptr, arguments);

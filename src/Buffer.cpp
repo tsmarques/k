@@ -5,6 +5,12 @@
 Buffer::Buffer(QWidget *parent) :
     QPlainTextEdit(parent)
 {
+  setObjectName(QString::fromUtf8("m_text_edit"));
+  QPalette p = palette();
+  p.setColor(QPalette::Base, QColor::fromRgb(46, 52, 64));
+  p.setColor(QPalette::Text, QColor::fromRgb(216, 222, 233));
+  setPalette(p);
+
   linum_area = new LineNumberArea(this);
 
   QFont f("Source Code Pro");

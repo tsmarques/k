@@ -8,22 +8,20 @@
 
 namespace K
 {
-  K::K(QWidget* parent, const Arguments& args) :
+  K::K(QWidget* parent, const Options& args) :
       QMainWindow(parent),
       m_central_widget(nullptr),
       m_layout(nullptr),
-      m_text_edit(nullptr),
+      m_buffers(),
       m_args(args)
   {
     setupUI();
-    loadFiles();
   }
 
   K::~K()
   {
     Memory::clear(m_central_widget);
     Memory::clear(m_layout);
-    Memory::clear(m_text_edit);
   }
 
   void
@@ -59,14 +57,7 @@ namespace K
 //
 //    m_layout->addWidget(&m_tab);
 
-    m_text_edit = new Buffer(m_central_widget);
-    m_text_edit->setObjectName(QString::fromUtf8("m_text_edit"));
-//    m_text_edit->setFrameStyle(QFrame::NoFrame);
-    m_layout->addWidget(m_text_edit);
-    QPalette p = m_text_edit->palette();
-    p.setColor(QPalette::Base, QColor::fromRgb(46, 52, 64));
-    p.setColor(QPalette::Text, QColor::fromRgb(216, 222, 233));
-    m_text_edit->setPalette(p);
+    loadBuffers();
 
     m_mx_text_edit = new QPlainTextEdit(m_central_widget);
     m_mx_text_edit->setObjectName(QString::fromUtf8("m_mx_text_edit"));
@@ -88,23 +79,50 @@ namespace K
   }
 
   void
-  K::loadFiles()
+  K::loadBuffers()
   {
     setWindowTitle(QString::fromUtf8(">= "));
     fs::path home = fs::path(getenv("HOME"));
-    std::filesystem::path path(home / ".k-editor/greet.txt");
+    std::filesystem::path greet_path(home / ".k-editor/greet.txt");
 
-    std::ifstream ifs(path);
+    std::ifstream ifs(greet_path);
     std::string content( (std::istreambuf_iterator<char>(ifs)),
                          (std::istreambuf_iterator<char>()));
 
     klog(content);
 
-    std::string window_title = "K [" + m_args.m_curr_dir + "] - " + path.c_str();
-    setWindowTitle(QString::fromUtf8(window_title.c_str()));
-    m_text_edit->setPlainText(QString::fromUtf8(content.c_str()));
+    m_buffers[greet_path] = std::make_shared<Buffer>(m_central_widget);
+    m_buffers[greet_path]->setPlainText(QString::fromUtf8(content.c_str()));
 
-//    m_tab.addTab(m_text_edit, path.filename().c_str());
-//    m_tab.addTab(new QWidget(), "Other");
+    auto bfr_to_display = m_buffers[greet_path];
+
+    std::string window_title;
+    if (!m_args.m_files_list.has_value())
+      window_title = greet_path.c_str();
+    else
+    {
+      bool first = true;
+      for (auto& file_path : m_args.m_files_list.value())
+      {
+        auto text_bfr = std::make_shared<Buffer>(m_central_widget);
+        std::ifstream f_in(file_path);
+        std::string f_content( (std::istreambuf_iterator<char>(f_in)),
+                               (std::istreambuf_iterator<char>()));
+
+        text_bfr->setPlainText(QString::fromUtf8(f_content.c_str()));
+        m_buffers[file_path] = text_bfr;
+
+        if (first)
+        {
+          first = false;
+          bfr_to_display = text_bfr;
+          window_title = file_path;
+        }
+      }
+    }
+
+    // meh
+    m_layout->addWidget(bfr_to_display.get());
+    setWindowTitle(QString::fromUtf8(std::string("K[ " + window_title + " ]").c_str()));
   }
 }

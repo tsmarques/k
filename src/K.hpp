@@ -15,6 +15,7 @@
 
 #include "Buffer.hpp"
 #include <Options.hpp>
+#include <OptionsParser.hpp>
 #include <QtWidgets/QPlainTextEdit>
 
 namespace fs = std::filesystem;
@@ -23,32 +24,26 @@ namespace K
 {
   constexpr const char* c_greet_screen = "~/.k/greet.txt";
 
-  struct Arguments
-  {
-    std::string m_curr_dir;
-    std::optional<std::vector<std::filesystem::path>> m_files_list;
-  };
-
   class K : public QMainWindow
   {
   Q_OBJECT
     QWidget* m_central_widget;
     QVBoxLayout* m_layout;
-    Buffer* m_text_edit;
+    std::map<std::filesystem::path, std::shared_ptr<Buffer>> m_buffers;
     QPlainTextEdit* m_mx_text_edit;
 //    QTabWidget m_tab;
 
-    const Arguments& m_args;
+    const Options& m_args;
 
     void
     setupUI();
 
     void
-    loadFiles();
+    loadBuffers();
 
 
   public:
-    K(QWidget* parent, const Arguments& options);
+    K(QWidget* parent, const Options& options);
     ~K() override;
   };
 }
