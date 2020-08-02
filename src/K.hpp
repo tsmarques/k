@@ -36,7 +36,7 @@ namespace K
     QVBoxLayout* m_layout;
     Buffer* m_text_edit;
     QPlainTextEdit* m_mx_text_edit;
-    QTabWidget m_tab;
+//    QTabWidget m_tab;
 
     const Arguments& m_args;
 

@@ -13,7 +13,6 @@ namespace K
       m_central_widget(nullptr),
       m_layout(nullptr),
       m_text_edit(nullptr),
-      m_tab(),
       m_args(args)
   {
     setupUI();
@@ -52,13 +51,13 @@ namespace K
     m_layout->setObjectName(QString::fromUtf8("verticalLayout"));
     m_layout->setSpacing(0);
 
-    QPalette tab_palette = m_tab.palette();
-//    tab_palette.setColor(QPalette::Window, QColor::fromRgb(46, 52, 64));
-    m_tab.setStyleSheet("QTabWidget::pane { border: 0; }");
-//    tab->setAutoFillBackground(true);
-    m_tab.setPalette(tab_palette);
-
-    m_layout->addWidget(&m_tab);
+//    QPalette tab_palette = m_tab.palette();
+////    tab_palette.setColor(QPalette::Window, QColor::fromRgb(46, 52, 64));
+//    m_tab.setStyleSheet("QTabWidget::pane { border: 0; }");
+////    tab->setAutoFillBackground(true);
+//    m_tab.setPalette(tab_palette);
+//
+//    m_layout->addWidget(&m_tab);
 
     m_text_edit = new Buffer(m_central_widget);
     m_text_edit->setObjectName(QString::fromUtf8("m_text_edit"));
@@ -105,7 +104,7 @@ namespace K
     setWindowTitle(QString::fromUtf8(window_title.c_str()));
     m_text_edit->setPlainText(QString::fromUtf8(content.c_str()));
 
-    m_tab.addTab(m_text_edit, path.filename().c_str());
-    m_tab.addTab(new QWidget(), "Other");
+//    m_tab.addTab(m_text_edit, path.filename().c_str());
+//    m_tab.addTab(new QWidget(), "Other");
   }
 }
