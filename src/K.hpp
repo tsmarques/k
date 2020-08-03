@@ -27,10 +27,10 @@ namespace K
   class K : public QMainWindow
   {
   Q_OBJECT
-    QWidget* m_central_widget;
-    QVBoxLayout* m_layout;
+    QWidget m_central_widget;
+    QVBoxLayout m_layout;
     std::map<std::filesystem::path, std::shared_ptr<Buffer>> m_buffers;
-    QPlainTextEdit* m_mx_text_edit;
+    QPlainTextEdit m_mx_text_edit;
 //    QTabWidget m_tab;
 
     const Options& m_args;
