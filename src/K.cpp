@@ -60,16 +60,19 @@ namespace K
     loadBuffers();
 
     m_mx_text_edit = new QPlainTextEdit(m_central_widget);
+    m_mx_text_edit->setWindowTitle(QString::fromUtf8("m-x"));
     m_mx_text_edit->setObjectName(QString::fromUtf8("m_mx_text_edit"));
-    m_mx_text_edit->setMaximumSize(QSize(16777215, 25));
-    m_mx_text_edit->setFocusPolicy(Qt::NoFocus);
+    m_mx_text_edit->setMaximumSize(QSize(16777215, 30));
     m_mx_text_edit->setUndoRedoEnabled(false);
     m_mx_text_edit->setLineWrapMode(QPlainTextEdit::NoWrap);
-    m_mx_text_edit->setReadOnly(true);
-    m_mx_text_edit->setPlainText(QString::fromUtf8(">= "));
-    m_mx_text_edit->setFrameStyle(QFrame::NoFrame);
-    m_mx_text_edit->setVisible(false);
+    m_mx_text_edit->setPlainText(QString::fromUtf8("> "));
+    m_mx_text_edit->setVisible(true);
 
+    QPalette p = m_mx_text_edit->palette();
+    p.setColor(QPalette::Base, QColor::fromRgb(46, 52, 64));
+    p.setColor(QPalette::Text, QColor::fromRgb(216, 222, 233));
+    m_mx_text_edit->setPalette(p);
+//
     m_layout->addWidget(m_mx_text_edit);
     this->setCentralWidget(m_central_widget);
 
@@ -81,7 +84,6 @@ namespace K
   void
   K::loadBuffers()
   {
-    setWindowTitle(QString::fromUtf8(">= "));
     fs::path home = fs::path(getenv("HOME"));
     std::filesystem::path greet_path(home / ".k-editor/greet.txt");
 
@@ -91,7 +93,7 @@ namespace K
 
     klog(content);
 
-    m_buffers[greet_path] = std::make_shared<Buffer>(m_central_widget);
+    m_buffers[greet_path] = std::make_shared<Buffer>();
     m_buffers[greet_path]->setPlainText(QString::fromUtf8(content.c_str()));
 
     auto bfr_to_display = m_buffers[greet_path];
@@ -104,7 +106,7 @@ namespace K
       bool first = true;
       for (auto& file_path : m_args.m_files_list.value())
       {
-        auto text_bfr = std::make_shared<Buffer>(m_central_widget);
+        auto text_bfr = std::make_shared<Buffer>();
         std::ifstream f_in(file_path);
         std::string f_content( (std::istreambuf_iterator<char>(f_in)),
                                (std::istreambuf_iterator<char>()));
@@ -122,6 +124,7 @@ namespace K
     }
 
     // meh
+    bfr_to_display->setParent(m_central_widget);
     m_layout->addWidget(bfr_to_display.get());
     setWindowTitle(QString::fromUtf8(std::string("K[ " + window_title + " ]").c_str()));
   }
