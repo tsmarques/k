@@ -101,6 +101,18 @@ namespace K
       bool first = true;
       for (auto& file_path : m_args.m_files_list.value())
       {
+        if (!std::filesystem::exists(file_path))
+        {
+          klog("can't find ", file_path);
+          continue;
+        }
+
+        if (std::filesystem::is_directory(file_path))
+        {
+          klog("can't open directories : ", file_path);
+          continue;
+        }
+
         auto text_bfr = std::make_shared<Buffer>();
         std::ifstream f_in(file_path);
         std::string f_content( (std::istreambuf_iterator<char>(f_in)),
