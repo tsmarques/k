@@ -11,60 +11,55 @@ class QWidget;
 
 class Linum;
 
-
-class Buffer : public QPlainTextEdit
+namespace K
 {
-Q_OBJECT
-
-public:
-  Buffer(QWidget *parent = nullptr);
-
-  void linumPaintEvent(QPaintEvent *event);
-
-  int linumWidth();
-
-protected:
-  void
-  resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
-
-private slots:
-  void updateLinumWidth(int newBlockCount);
-
-  void
-  highlightCurrentLine();
-
-  void updateLinumArea(const QRect& rect, int dy);
-
-private:
-  QWidget* linum_area;
-};
-
-
-class Linum : public QWidget
-{
-public:
-  explicit Linum(Buffer*editor) :
-      QWidget(editor)
+  class Buffer : public QPlainTextEdit
   {
-    m_editor = editor;
-  }
+    Q_OBJECT
 
-  QSize
-  sizeHint() const Q_DECL_OVERRIDE
+  public:
+    Buffer(QWidget* parent = nullptr);
+
+    void linumPaintEvent(QPaintEvent* event);
+
+    int linumWidth();
+
+  protected:
+    void resizeEvent(QResizeEvent* event) Q_DECL_OVERRIDE;
+
+  private slots:
+    void updateLinumWidth(int newBlockCount);
+
+    void highlightCurrentLine();
+
+    void updateLinumArea(const QRect& rect, int dy);
+
+  private:
+    QWidget* linum_area;
+  };
+
+  class Linum : public QWidget
   {
-    return QSize(m_editor->linumWidth(), 0);
-  }
+  public:
+    explicit Linum(Buffer* editor) : QWidget(editor) { m_editor = editor; }
 
-protected:
-  void
-  paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE
-  {
-    m_editor->linumPaintEvent(event);
-  }
+    QSize
+    sizeHint() const Q_DECL_OVERRIDE
+    {
+      return QSize(m_editor->linumWidth(), 0);
+    }
 
-private:
-  Buffer* m_editor;
-};
+  protected:
+    void
+    paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE
+    {
+      m_editor->linumPaintEvent(event);
+    }
+
+  private:
+    Buffer* m_editor;
+  };
+}
 
 
 #endif

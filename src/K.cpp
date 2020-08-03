@@ -5,6 +5,7 @@
 #include <QtCore/QCoreApplication>
 #include <fstream>
 #include <iostream>
+#include <src/Buffer/DefaultActions.hpp>
 
 namespace K
 {
@@ -60,7 +61,7 @@ namespace K
     m_mx_text_edit.setMaximumSize(QSize(16777215, 30));
     m_mx_text_edit.setUndoRedoEnabled(false);
     m_mx_text_edit.setLineWrapMode(QPlainTextEdit::NoWrap);
-    m_mx_text_edit.setPlainText(QString::fromUtf8("> "));
+    m_mx_text_edit.setPlainText(QString::fromUtf8("k > "));
     m_mx_text_edit.setVisible(true);
 
     QPalette p = m_mx_text_edit.palette();
@@ -82,14 +83,10 @@ namespace K
     fs::path home = fs::path(getenv("HOME"));
     std::filesystem::path greet_path(home / ".k-editor/greet.txt");
 
-    std::ifstream ifs(greet_path);
-    std::string content( (std::istreambuf_iterator<char>(ifs)),
-                         (std::istreambuf_iterator<char>()));
-
-    klog(content);
-
     m_buffers[greet_path] = std::make_shared<Buffer>();
-    m_buffers[greet_path]->setPlainText(QString::fromUtf8(content.c_str()));
+
+    m_buffer_actions[greet_path] = std::make_unique<DefaultActions>();
+    m_buffer_actions[greet_path]->load(greet_path, *m_buffers[greet_path].get());
 
     auto bfr_to_display = m_buffers[greet_path];
 
@@ -114,12 +111,10 @@ namespace K
         }
 
         auto text_bfr = std::make_shared<Buffer>();
-        std::ifstream f_in(file_path);
-        std::string f_content( (std::istreambuf_iterator<char>(f_in)),
-                               (std::istreambuf_iterator<char>()));
-
-        text_bfr->setPlainText(QString::fromUtf8(f_content.c_str()));
         m_buffers[file_path] = text_bfr;
+
+        m_buffer_actions[file_path] = std::make_unique<DefaultActions>();
+        m_buffer_actions[file_path]->load(file_path, *m_buffers[file_path].get());
 
         if (first)
         {

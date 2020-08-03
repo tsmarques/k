@@ -17,6 +17,8 @@
 #include <Options.hpp>
 #include <OptionsParser.hpp>
 #include <QtWidgets/QPlainTextEdit>
+#include <src/Buffer/BufferActions.hpp>
+#include <src/Buffer/DefaultActions.hpp>
 
 namespace fs = std::filesystem;
 
@@ -29,9 +31,11 @@ namespace K
   Q_OBJECT
     QWidget m_central_widget;
     QVBoxLayout m_layout;
-    std::map<std::filesystem::path, std::shared_ptr<Buffer>> m_buffers;
     QPlainTextEdit m_mx_text_edit;
-//    QTabWidget m_tab;
+    //! Existing buffers
+    std::map<std::filesystem::path, std::shared_ptr<Buffer>> m_buffers;
+    //! Buffer actions
+    std::map<std::filesystem::path, std::unique_ptr<BufferActions>> m_buffer_actions;
 
     const Options& m_args;
 
