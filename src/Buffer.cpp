@@ -102,7 +102,7 @@ void
 Buffer::lineNumberAreaPaintEvent(QPaintEvent *event)
 {
   QPainter painter(linum_area);
-  painter.fillRect(event->rect(), QColor::fromRgb(46, 52, 64));
+  painter.fillRect(event->rect(), QColor::fromRgb(121, 125, 133));
 
 
   QTextBlock block = firstVisibleBlock();
