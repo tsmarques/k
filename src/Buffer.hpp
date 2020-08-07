@@ -4,12 +4,12 @@
 #include <QPlainTextEdit>
 #include <QObject>
 
+#include "KMode.hpp"
+
 class QPaintEvent;
 class QResizeEvent;
 class QSize;
 class QWidget;
-
-class Linum;
 
 namespace K
 {
@@ -17,47 +17,33 @@ namespace K
   {
     Q_OBJECT
 
+    std::vector<std::unique_ptr<Mode::KMode>> m_active_modes;
+    void highlightCurrentLine();
+
   public:
     Buffer(QWidget* parent = nullptr);
 
-    void linumPaintEvent(QPaintEvent* event);
+    void setModes(std::vector<std::unique_ptr<Mode::KMode>>& modes);
 
     int linumWidth();
 
+    //! Public access to setViewportMargins
+    void setMargins(int left, int top, int right, int bottom);
+
+    //! Public access to firstVisibleBlock()
+    QTextBlock getFirstVisibleBlock();
+
+    //! Public access to blockBoundingGeometry
+    QRectF getBlockBoundingGeometry(const QTextBlock &block) const;
+
+    //! Public access to blockBoundingRect
+    QRectF getBlockBoundingRect(const QTextBlock &block) const;
+
+    //! Public access to contentOffset
+    QPointF getContentOffset() const;
+
   protected:
     void resizeEvent(QResizeEvent* event) Q_DECL_OVERRIDE;
-
-  private slots:
-    void updateLinumWidth(int newBlockCount);
-
-    void highlightCurrentLine();
-
-    void updateLinumArea(const QRect& rect, int dy);
-
-  private:
-    QWidget* linum_area;
-  };
-
-  class Linum : public QWidget
-  {
-  public:
-    explicit Linum(Buffer* editor) : QWidget(editor) { m_editor = editor; }
-
-    QSize
-    sizeHint() const Q_DECL_OVERRIDE
-    {
-      return QSize(m_editor->linumWidth(), 0);
-    }
-
-  protected:
-    void
-    paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE
-    {
-      m_editor->linumPaintEvent(event);
-    }
-
-  private:
-    Buffer* m_editor;
   };
 }
 

@@ -28,6 +28,7 @@ namespace K
       std::string text = bfr.toPlainText().toStdString();
       f_stream.write(text.c_str(), text.size());
     }
+
     ~DefaultActions()
     {
       f_stream.close();

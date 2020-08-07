@@ -45,10 +45,11 @@ namespace K
     void
     loadBuffers();
 
+    void loadModes(std::shared_ptr<Buffer> parent_buffer);
+
 
   public:
     K(QWidget* parent, const Options& options);
-    ~K() override;
   };
 }
 #endif // BEE_HPP

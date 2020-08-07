@@ -19,10 +19,8 @@ find_package(Qt5Widgets REQUIRED)
 add_executable(k
         main.cpp
         src/K.cpp
-        src/K.hpp
         src/Buffer.cpp
-        src/Buffer.hpp
-        src/Memory.hpp)
+        src/LinumMode.cpp)
 
 include_directories(src)
 

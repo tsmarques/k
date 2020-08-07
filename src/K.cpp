@@ -7,6 +7,8 @@
 #include <iostream>
 #include <src/Buffer/DefaultActions.hpp>
 
+#include "Factory.hpp"
+
 namespace K
 {
   K::K(QWidget* parent, const Options& args) :
@@ -19,9 +21,6 @@ namespace K
   {
     setupUI();
   }
-
-  K::~K()
-  { }
 
   void
   K::setupUI()
@@ -116,6 +115,9 @@ namespace K
         m_buffer_actions[file_path] = std::make_unique<DefaultActions>();
         m_buffer_actions[file_path]->load(file_path, *m_buffers[file_path].get());
 
+
+        loadModes(text_bfr);
+
         if (first)
         {
           first = false;
@@ -129,5 +131,15 @@ namespace K
     bfr_to_display->setParent(&m_central_widget);
     m_layout.addWidget(bfr_to_display.get());
     setWindowTitle(QString::fromUtf8(std::string("K[ " + window_title + " ]").c_str()));
+  }
+
+  void
+  K::loadModes(std::shared_ptr<Buffer> parent_buffer)
+  {
+    // @todo parse modules, etc
+    std::vector<std::unique_ptr<Mode::KMode>> modes;
+    modes.push_back(Mode::Factory::create("linum-mode", parent_buffer));
+
+    parent_buffer->setModes(modes);
   }
 }
