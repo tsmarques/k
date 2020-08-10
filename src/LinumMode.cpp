@@ -11,10 +11,10 @@ namespace K::Mode
       KMode(),
       buffer(bfr)
   {
-    buffer->connect(buffer.get(), SIGNAL(blockCountChanged(int)), buffer.get(),
+    buffer->connect(buffer.get(), SIGNAL(blockCountChanged(int)),
                     SLOT(updateLinumWidth(int)));
 
-    buffer->connect(buffer.get(), SIGNAL(updateRequest(QRect, int)), buffer.get(),
+    buffer->connect(buffer.get(), SIGNAL(updateRequest(QRect, int)),
                     SLOT(updateLinumArea(QRect, int)));
   }
 
